@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+	<meta charset="utf-8">
+	<meta name="description" content="Miminium Admin Template v.1">
+	<meta name="author" content="Isna Nur Azis">
+	<meta name="keyword" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tráfico Inteligente</title>
+
+  <!-- start: Css -->
+  <link rel="stylesheet" type="text/css" href="/asset/css/bootstrap.min.css">
+
+  <!-- plugins -->
+  <link rel="stylesheet" type="text/css" href="/asset/css/plugins/font-awesome.min.css"/>
+  <link rel="stylesheet" type="text/css" href="/asset/css/plugins/simple-line-icons.css"/>
+  <link rel="stylesheet" type="text/css" href="/asset/css/plugins/mediaelementplayer.css"/>
+  <link rel="stylesheet" type="text/css" href="/asset/css/plugins/animate.min.css"/>
+  <link href="/asset/css/style.css" rel="stylesheet">
+  
+  <!-- end: Css -->
+
+  <link rel="shortcut icon" href="/asset/img/logomi.png">
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]
+  <script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwFHGwa3B6mQw4oomqjT6LzbPzhSPkFaM">
+  </script>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>-->
+  <!-- start: Javascript -->
+<script src="/asset/js/jquery.min.js"></script>
+<script src="/asset/js/jquery.ui.min.js"></script>
+<script src="/asset/js/bootstrap.min.js"></script>
+
+
+
+<!-- plugins -->
+<script src="/asset/js/plugins/holder.min.js"></script>
+<script src="/asset/js/plugins/moment.min.js"></script>
+<script src="/asset/js/plugins/jquery.nicescroll.js"></script>
+<script src="/asset/js/plugins/fullcalendar.min.js"></script>
+<script src="/asset/js/plugins/jquery.vmap.min.js"></script>
+<script src="/asset/js/plugins/maps/jquery.vmap.world.js"></script>
+<script src="/asset/js/plugins/jquery.vmap.sampledata.js"></script>
+<script src="/asset/js/plugins/chart.min.js"></script>
+
+<!-- custom -->
+<script src="/asset/js/main.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- end: Javascript -->
+</head>
+
+<script type="text/javascript">
+
+  var map, heatmap, points;
+  var socket = io.connect();
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('mapa_div'), {
+      // === Queretaro coordinates ===
+      center: new google.maps.LatLng(20.591652120829167,-100.4055118560791),
+      zoom: 12,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    points = new google.maps.MVCArray();
+
+    heatmap = new google.maps.visualization.HeatmapLayer({
+      data: points,
+      map: map
+    });
+
+  }
+  //google.maps.event.addDomListener(window, "load", initMap);
+
+  socket.on('location', function(res){
+    var loc = res.split(":");
+    var lat = parseFloat(loc[2]);
+    var lon = parseFloat(loc[3]);
+    points.push(new google.maps.LatLng(lat, lon));
+  });
+
+
+  function toggleHeatmap() {
+    heatmap.setMap(heatmap.getMap() ? null : map);
+  }
+
+  function changeGradient() {
+    var gradient = [
+      'rgba(0, 255, 255, 0)',
+      'rgba(0, 255, 255, 1)',
+      'rgba(0, 191, 255, 1)',
+      'rgba(0, 127, 255, 1)',
+      'rgba(0, 63, 255, 1)',
+      'rgba(0, 0, 255, 1)',
+      'rgba(0, 0, 223, 1)',
+      'rgba(0, 0, 191, 1)',
+      'rgba(0, 0, 159, 1)',
+      'rgba(0, 0, 127, 1)',
+      'rgba(63, 0, 91, 1)',
+      'rgba(127, 0, 63, 1)',
+      'rgba(191, 0, 31, 1)',
+      'rgba(255, 0, 0, 1)'
+    ]
+    heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+  }
+
+  function changeRadius() {
+    heatmap.set('radius', heatmap.get('radius') ? null : 20);
+  }
+
+  function changeOpacity() {
+    heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+  }
+
+
+  // === test coordinates ===
+  function getPoints() {
+    return [
+      new google.maps.LatLng(20.704417570532552,-100.44268727302551),
+      new google.maps.LatLng(20.704056276505966,-100.44238686561584),
+      new google.maps.LatLng(20.703494261864236,-100.44225811958313),
+      new google.maps.LatLng(20.702771668549122,-100.4420006275177),
+      new google.maps.LatLng(20.70220964914517,-100.4416573047638),
+      new google.maps.LatLng(20.70160748318614,-100.44127106666565),
+      new google.maps.LatLng(20.70084473620476,-100.44084191322327),
+      new google.maps.LatLng(20.700362999292157,-100.44041275978088),
+      new google.maps.LatLng(20.699279085642743,-100.44006943702698),
+      new google.maps.LatLng(20.698476181647827,-100.43994069099426),
+      new google.maps.LatLng(20.69791414632191,-100.43985486030579),
+      new google.maps.LatLng(20.697071089427318,-100.43985486030579),
+      new google.maps.LatLng(20.69634846550176,-100.43985486030579),
+      new google.maps.LatLng(20.695706130232864,-100.43985486030579),
+      new google.maps.LatLng(20.69486306106393,-100.43989777565002),
+      new google.maps.LatLng(20.69410028015873,-100.43989777565002),
+      new google.maps.LatLng(20.69333749541746,-100.43972611427307),
+      new google.maps.LatLng(20.692534559966795,-100.43951153755188),
+      new google.maps.LatLng(20.692092943657254,-100.43925404548645),
+      new google.maps.LatLng(20.691651326062072,-100.43869614601135),
+      new google.maps.LatLng(20.691490737526863,-100.43783783912659),
+      new google.maps.LatLng(20.690968823613435,-100.43715119361877),
+      new google.maps.LatLng(20.690607497544555,-100.43689370155334),
+      new google.maps.LatLng(20.69012572811405,-100.43655037879944),
+      new google.maps.LatLng(20.68976440003712,-100.43624997138977),
+      new google.maps.LatLng(20.6893629233868,-100.43582081794739),
+      new google.maps.LatLng(20.68823878311386,-100.4356062412262),
+      new google.maps.LatLng(20.687475968899435,-100.43547749519348),
+      new google.maps.LatLng(20.686432111654494,-100.43534874916077),
+      new google.maps.LatLng(20.685508693490227,-100.43526291847229),
+      new google.maps.LatLng(20.68466556765,-100.43517708778381),
+      new google.maps.LatLng(20.683420944752978,-100.43500542640686),
+      new google.maps.LatLng(20.68301945131841,-100.43491959571838),
+      new google.maps.LatLng(20.682497508265552,-100.43491959571838),
+      new google.maps.LatLng(20.681895264051008,-100.43487668037415),
+      new google.maps.LatLng(20.680891518382932,-100.43466210365295),
+      new google.maps.LatLng(20.68004836689199,-100.43474793434143),
+      new google.maps.LatLng(20.678924157618578,-100.43470501899719),
+      new google.maps.LatLng(20.678000693772617,-100.43453335762024),
+      new google.maps.LatLng(20.676715865163604,-100.43423295021057),
+      new google.maps.LatLng(20.67575223657095,-100.43423295021057),
+      new google.maps.LatLng(20.674949208071606,-100.43419003486633),
+      new google.maps.LatLng(20.673182530422924,-100.43401837348938),
+      new google.maps.LatLng(20.672299183890274,-100.43401837348938),
+      new google.maps.LatLng(20.67169689921722,-100.43371796607971),
+      new google.maps.LatLng(20.670934001868844,-100.43367505073547),
+      new google.maps.LatLng(20.67037186452816,-100.433589220047),
+      new google.maps.LatLng(20.66924758360452,-100.43354630470276),
+      new google.maps.LatLng(20.668484673952094,-100.4333746433258),
+      new google.maps.LatLng(20.667400532590737,-100.43328881263733),
+      new google.maps.LatLng(20.66639669109715,-100.43328881263733),
+      new google.maps.LatLng(20.665874690898693,-100.43316006660461),
+      new google.maps.LatLng(20.665192072547914,-100.43320298194885),
+      new google.maps.LatLng(20.66402759887002,-100.43298840522766),
+      new google.maps.LatLng(20.662863116266156,-100.43290257453918),
+      new google.maps.LatLng(20.662260794175616,-100.43273091316223),
+      new google.maps.LatLng(20.660614434944858,-100.43273091316223),
+      new google.maps.LatLng(20.65977117086934,-100.43260216712952),
+      new google.maps.LatLng(20.659128680813595,-100.4324734210968),
+      new google.maps.LatLng(20.65864681148904,-100.4324734210968),
+      new google.maps.LatLng(20.65792400463718,-100.4324734210968),
+      new google.maps.LatLng(20.65724135056479,-100.43217301368713),
+      new google.maps.LatLng(20.656799631589767,-100.43225884437561),
+      new google.maps.LatLng(20.6557957200537,-100.43200135231018),
+      new google.maps.LatLng(20.65503274285128,-100.4321300983429),
+      new google.maps.LatLng(20.654269761818746,-100.43187260627747),
+      new google.maps.LatLng(20.653587091332614,-100.4319155216217),
+      new google.maps.LatLng(20.6527036308581,-100.43174386024475),
+      new google.maps.LatLng(20.652221741162332,-100.43174386024475),
+      new google.maps.LatLng(20.651619376894423,-100.4315721988678),
+      new google.maps.LatLng(20.650896536622252,-100.43144345283508),
+      new google.maps.LatLng(20.65037448317707,-100.43144345283508),
+      new google.maps.LatLng(20.649852427939166,-100.43144345283508),
+      new google.maps.LatLng(20.64949100403201,-100.43144345283508),
+      new google.maps.LatLng(20.648326410042106,-100.43131470680237),
+      new google.maps.LatLng(20.647402760189916,-100.43127179145813),
+      new google.maps.LatLng(20.646800376828676,-100.43127179145813),
+      new google.maps.LatLng(20.646318468421455,-100.43118596076965),
+      new google.maps.LatLng(20.64539480637204,-100.43114304542542),
+      new google.maps.LatLng(20.644551457861873,-100.43084263801575),
+      new google.maps.LatLng(20.642904906815204,-100.43075680732727),
+      new google.maps.LatLng(20.642583626483663,-100.43071389198303),
+      new google.maps.LatLng(20.642021384270357,-100.43071389198303),
+      new google.maps.LatLng(20.641539460718974,-100.43079972267151),
+      new google.maps.LatLng(20.641659941749985,-100.43071389198303),
+      new google.maps.LatLng(20.639973198631427,-100.43041348457336),
+      new google.maps.LatLng(20.639049498045164,-100.43007016181946),
+      new google.maps.LatLng(20.638406920416134,-100.42985558509827),
+      new google.maps.LatLng(20.638085630583753,-100.42959809303284),
+      new google.maps.LatLng(20.637563533158897,-100.42934060096741),
+      new google.maps.LatLng(20.636760302852622,-100.42878270149231),
+      new google.maps.LatLng(20.636198039114962,-100.42861104011536),
+      new google.maps.LatLng(20.635515287497082,-100.42818188667297),
+      new google.maps.LatLng(20.63471204637701,-100.42779564857483),
+      new google.maps.LatLng(20.63394896338522,-100.42770981788635),
+      new google.maps.LatLng(20.633547339220833,-100.42728066444397),
+      new google.maps.LatLng(20.632944900986626,-100.42706608772278),
+      new google.maps.LatLng(20.63202115772848,-100.42667984962463),
+      new google.maps.LatLng(20.631458876478103,-100.42655110359192),
+      new google.maps.LatLng(20.63117773507383,-100.42646527290344),
+      new google.maps.LatLng(20.630414634358395,-100.4260790348053),
+      new google.maps.LatLng(20.629772020261804,-100.42573571205139),
+      new google.maps.LatLng(20.629169567081945,-100.4255211353302),
+      new google.maps.LatLng(20.628567111517356,-100.42539238929749),
+      new google.maps.LatLng(20.628125309254383,-100.42504906654358),
+      new google.maps.LatLng(20.627643341686756,-100.4249632358551),
+      new google.maps.LatLng(20.627322029127136,-100.42479157447815),
+      new google.maps.LatLng(20.627040880081086,-100.42466282844543),
+      new google.maps.LatLng(20.62651874476068,-100.42444825172424),
+      new google.maps.LatLng(20.62591627870393,-100.42427659034729),
+      new google.maps.LatLng(20.625353974899674,-100.42397618293762),
+      new google.maps.LatLng(20.62487199855714,-100.42384743690491),
+      new google.maps.LatLng(20.624470350439374,-100.42363286018372),
+      new google.maps.LatLng(20.624068701261898,-100.42341828346252),
+      new google.maps.LatLng(20.622341597724105,-100.422602891922),
+      new google.maps.LatLng(20.621176795903782,-100.42251706123352),
+      new google.maps.LatLng(20.62025298122745,-100.4220449924469),
+      new google.maps.LatLng(20.619489825745635,-100.42178750038147),
+      new google.maps.LatLng(20.61836516859058,-100.42161583900452),
+      new google.maps.LatLng(20.617722503629935,-100.42144417762756),
+      new google.maps.LatLng(20.617120002766203,-100.42118668556213),
+      new google.maps.LatLng(20.616517499518896,-100.42110085487366),
+      new google.maps.LatLng(20.615593656577012,-100.42084336280823),
+      new google.maps.LatLng(20.61499114729151,-100.4205858707428),
+      new google.maps.LatLng(20.614308300553358,-100.42032837867737),
+      new google.maps.LatLng(20.613504947530423,-100.42019963264465),
+      new google.maps.LatLng(20.61217940577974,-100.41972756385803),
+      new google.maps.LatLng(20.61113503142809,-100.41959881782532),
+      new google.maps.LatLng(20.609929975202643,-100.41899800300598),
+      new google.maps.LatLng(20.60896592335951,-100.41869759559631),
+      new google.maps.LatLng(20.608403556967296,-100.4185688495636),
+      new google.maps.LatLng(20.607801019243727,-100.41839718818665),
+      new google.maps.LatLng(20.60695746242781,-100.41809678077698),
+      new google.maps.LatLng(20.60607373123089,-100.4180109500885),
+      new google.maps.LatLng(20.605189994908855,-100.41796803474426),
+      new google.maps.LatLng(20.604225913076213,-100.41758179664612),
+      new google.maps.LatLng(20.603221654681878,-100.41728138923645),
+      new google.maps.LatLng(20.602337901820917,-100.4171097278595),
+      new google.maps.LatLng(20.600771236428237,-100.4165518283844),
+      new google.maps.LatLng(20.599887469359278,-100.41625142097473),
+      new google.maps.LatLng(20.59880283913536,-100.4159939289093),
+      new google.maps.LatLng(20.59820026345412,-100.41582226753235),
+      new google.maps.LatLng(20.597316481479915,-100.41560769081116),
+      new google.maps.LatLng(20.595990798912435,-100.41522145271301),
+      new google.maps.LatLng(20.595388212116635,-100.41500687599182),
+      new google.maps.LatLng(20.595187349322135,-100.4150927066803),
+      new google.maps.LatLng(20.595147176731476,-100.41479229927063),
+      new google.maps.LatLng(20.594624932089815,-100.41517853736877),
+      new google.maps.LatLng(20.59498648626302,-100.4148781299591),
+      new google.maps.LatLng(20.594504413841566,-100.41474938392639),
+      new google.maps.LatLng(20.595026658896014,-100.41496396064758),
+      new google.maps.LatLng(20.595026658896014,-100.41496396064758),
+      new google.maps.LatLng(20.594705277535716,-100.41479229927063),
+      new google.maps.LatLng(20.5947856229393,-100.41492104530334),
+      new google.maps.LatLng(20.59434372269571,-100.41474938392639),
+      new google.maps.LatLng(20.594464241070966,-100.41427731513977),
+      new google.maps.LatLng(20.59490614096529,-100.41337609291077),
+      new google.maps.LatLng(20.595669419584386,-100.41247487068176),
+      new google.maps.LatLng(20.59603097128081,-100.41092991828918),
+      new google.maps.LatLng(20.59603097128081,-100.41002869606018),
+      new google.maps.LatLng(20.595910454143922,-100.40878415107727),
+      new google.maps.LatLng(20.595669419584386,-100.40745377540588),
+      new google.maps.LatLng(20.595629247120737,-100.40650963783264),
+      new google.maps.LatLng(20.595669419584386,-100.40569424629211),
+      new google.maps.LatLng(20.595749764479905,-100.40457844734192),
+      new google.maps.LatLng(20.595830109333082,-100.40346264839172),
+      new google.maps.LatLng(20.595910454143922,-100.4029905796051),
+      new google.maps.LatLng(20.595910454143922,-100.40238976478577),
+      new google.maps.LatLng(20.595910454143922,-100.40144562721252),
+      new google.maps.LatLng(20.59643269438238,-100.40020108222961),
+      new google.maps.LatLng(20.59643269438238,-100.399729013443),
+      new google.maps.LatLng(20.595870281743796,-100.39925694465637),
+      new google.maps.LatLng(20.59526769447169,-100.39921402931213),
+      new google.maps.LatLng(20.5947856229393,-100.3991711139679),
+      new google.maps.LatLng(20.59454458660155,-100.39904236793518),
+      new google.maps.LatLng(20.59398216699837,-100.39878487586975),
+      new google.maps.LatLng(20.593540264426274,-100.39874196052551),
+      new google.maps.LatLng(20.593218879933104,-100.39852738380432),
+      new google.maps.LatLng(20.59277697514901,-100.3983986377716),
+      new google.maps.LatLng(20.59253593563613,-100.39826989173889),
+      new google.maps.LatLng(20.592857321568648,-100.39844155311584),
+      new google.maps.LatLng(20.59261628218276,-100.39822697639465),
+      new google.maps.LatLng(20.592897494762592,-100.39848446846008),
+      new google.maps.LatLng(20.59253593563613,-100.39835572242737),
+      new google.maps.LatLng(20.592857321568648,-100.39848446846008),
+      new google.maps.LatLng(20.59265645544019,-100.39835572242737),
+      new google.maps.LatLng(20.592134202267953,-100.39818406105042),
+      new google.maps.LatLng(20.591692294340607,-100.3980553150177),
+      new google.maps.LatLng(20.591692294340607,-100.3980553150177),
+      new google.maps.LatLng(20.591571773774536,-100.3980553150177),
+      new google.maps.LatLng(20.591049516887633,-100.39788365364075),
+      new google.maps.LatLng(20.591009343206878,-100.39788365364075),
+      new google.maps.LatLng(20.59084864837798,-100.39784073829651),
+      new google.maps.LatLng(20.59080847464431,-100.39784073829651),
+      new google.maps.LatLng(20.59052725821225,-100.39766907691956),
+      new google.maps.LatLng(20.59052725821225,-100.39766907691956),
+      new google.maps.LatLng(20.590366562875396,-100.39758324623108),
+      new google.maps.LatLng(20.59004517169375,-100.39754033088684),
+      new google.maps.LatLng(20.590004997748423,-100.39754033088684),
+      new google.maps.LatLng(20.58976395385422,-100.39741158485413),
+      new google.maps.LatLng(20.589201516619596,-100.39711117744446),
+      new google.maps.LatLng(20.588558728668936,-100.3969395160675),
+      new google.maps.LatLng(20.587795414459123,-100.39676785469055),
+      new google.maps.LatLng(20.586911572180814,-100.39676785469055),
+      new google.maps.LatLng(20.58614824972826,-100.39625287055969),
+      new google.maps.LatLng(20.58582684965815,-100.39616703987122),
+      new google.maps.LatLng(20.585063521777727,-100.39599537849426),
+      new google.maps.LatLng(20.584420716389662,-100.39582371711731),
+      new google.maps.LatLng(20.583496678899216,-100.39556622505188),
+      new google.maps.LatLng(20.583014570160753,-100.39517998695374),
+      new google.maps.LatLng(20.583416327548598,-100.39380669593811),
+      new google.maps.LatLng(20.584460891805758,-100.39251923561096),
+      new google.maps.LatLng(20.58462159336438,-100.39187550544739),
+      new google.maps.LatLng(20.58498317125235,-100.39041638374329),
+      new google.maps.LatLng(20.58530457309997,-100.38934350013733),
+      new google.maps.LatLng(20.585465273769856,-100.38891434669495),
+      new google.maps.LatLng(20.58530457309997,-100.38990139961243),
+      new google.maps.LatLng(20.585505448910887,-100.38938641548157),
+      new google.maps.LatLng(20.585384923456072,-100.38977265357971),
+      new google.maps.LatLng(20.585746499534817,-100.3890860080719),
+      new google.maps.LatLng(20.585706324457274,-100.38968682289124),
+      new google.maps.LatLng(20.585465273769856,-100.38960099220276),
+      new google.maps.LatLng(20.585465273769856,-100.38947224617004),
+      new google.maps.LatLng(20.58558579916117,-100.38938641548157),
+      new google.maps.LatLng(20.58558579916117,-100.38972973823547),
+      new google.maps.LatLng(20.58558579916117,-100.3894293308258),
+      new google.maps.LatLng(20.585706324457274,-100.38904309272766),
+      new google.maps.LatLng(20.585766587069624,-100.38869440555573),
+      new google.maps.LatLng(20.585947374763787,-100.38839399814606),
+      new google.maps.LatLng(20.585967462272148,-100.38809359073639),
+      new google.maps.LatLng(20.586349124428203,-100.38751423358917),
+      new google.maps.LatLng(20.586449561678997,-100.38706362247467),
+      new google.maps.LatLng(20.58665043598217,-100.38661301136017),
+      new google.maps.LatLng(20.586720741925777,-100.38639575242996)
+    ];
+  }
+
+</script>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwFHGwa3B6mQw4oomqjT6LzbPzhSPkFaM&signed_in=true&libraries=visualization&callback=initMap">
+    </script>
+
+
+<body id="mimin" class="dashboard topnav">
+      <!-- start: Header -->
+        <nav class="navbar navbar-default header navbar-fixed-top">
+          <div class="col-md-12 col-sm-12 col-xs-12 nav-wrapper">
+            <div class="navbar-header" style="width:100%;">
+                <a href="index.html" class="navbar-brand"> 
+                 <b>Tráf-Int</b>
+                </a>
+
+                <ul class="nav navbar-nav search-nav">
+                    <li class="active"><a href="/traffic/">Densidad de tráfico</a></li>
+                    <li class=""><a href="/ubicacion">Ubicación</a></li>                  
+                </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right user-nav">
+                  <li class="user-name"><span>Roberto García</span></li>
+                    <li class="dropdown avatar-dropdown">
+                     <img src="/asset/img/avatar.jpg" class="img-circle avatar" alt="user name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"/>
+                     <ul class="dropdown-menu user-dropdown">
+                       <li><a href="#"><span class="fa fa-user"></span> Mi perfil</a></li>
+                       <li role="separator" class="divider"></li>
+                       <li class="more">
+                        <ul>
+                          <li><a href=""><span class="fa fa-power-off "></span></a></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+            </div>
+          </div>
+        </nav>
+      <!-- end: Header -->
+
+      <!-- start: Content -->
+        <div id="content">
+          <!-- <div class="panel box-shadow-none content-header">
+              <div class="panel-body">
+                <div class="col-md-12">
+                    <h3 class="animated fadeInLeft">Sistema inteligente de datos geográficos</h3>
+                </div>
+              </div>
+          </div> -->
+          <div class="row"><br> </div>
+          <div class="col-md-3 col-sm-3 col-xs-3 top-10 padding-0">
+            <div class="col-md-12">
+              <div class="panel">
+                <div class="panel-heading"><h3>Tipo</h3></div>
+                <div class="panel-body">
+                  <!--
+                  <div class="panel-heading bg-white border-none">
+                    <h4>Tipo</h4>
+                  </div>-->
+                  <div class="panel-body">
+                    <div class="media"  id="transporte_publico">
+                      <div class="media-left">
+                          <span class="fa fa-bus" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Transporte público</h5>
+                        
+                          <div class="progress progress-mini">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 90%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="media"  id="seguridad_publica">
+                      <div class="media-left">
+                          <span class="fa fa-motorcycle" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Seguridad pública</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100" style="width: 19%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div> -->
+                    <div class="media" id="taxi">
+                      <div class="media-left">
+                          <span class="fa fa-taxi" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Taxis</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" style="width: 55%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="media" id="privado">
+                      <div class="media-left">
+                          <span class="fa fa-car" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Privado</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width:20%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+
+                     <!-- <div class="media" id="ambulancia">
+                      <div class="media-left">
+                          <span class="fa fa-ambulance" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Ambulancias</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div> -->
+                  </div>
+                  <div class="panel-footer bg-white border-none">
+                      <center>
+                      </center>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="panel">
+                <div class="panel-heading"><h3>C4</h3></div>
+                <div class="panel-body">
+                  <!--
+                  <div class="panel-heading bg-white border-none">
+                    <h4>Tipo</h4>
+                  </div>-->
+                  <div class="panel-body">
+                    <div class="media"  id="seguridad_publica">
+                      <div class="media-left">
+                          <span class="fa fa-motorcycle" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Seguridad pública</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="19" aria-valuemin="0" aria-valuemax="100" style="width: 19%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="media" id="ambulancia">
+                      <div class="media-left">
+                          <span class="fa fa-ambulance" style="font-size:2em;"></span>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading">Ambulancias</h5>
+                          <div class="progress progress-mini">
+                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%;">
+                              <span class="sr-only">60% Complete</span>
+                            </div>
+                          </div>
+                      </div>
+                    </div> 
+                  </div>
+                  <div class="panel-footer bg-white border-none">
+                      <center>
+                      </center>
+                  </div>
+                </div>
+              </div>
+            </div>  
+          </div>
+
+          <div class="col-md-9 col-sm-9  col-xs-9 top-10 padding-0">
+            <div class="col-md-12">
+            <div class="panel">
+              <div class="panel-heading"><h3>Mapa</h3><div id="floating-panel">
+                <!-- <button onclick="toggleHeatmap()">Toggle Heatmap</button> -->
+                <button onclick="changeGradient()">Escala de colores</button>
+                <button onclick="changeRadius()">Radio</button>
+                <button onclick="changeOpacity()">Intensidad</button>
+              </div>
+            </div>
+                  <div class="bg-green text-white">
+                       <div id="mapa_div" class="col-md-12 col-sm-12 col-xs-12" style="height:530px;"></div>
+                  </div>
+            </div>
+            </div> 
+          </div>
+        <div class="row"></div>
+
+        </div>
+      <!-- end: content -->
+
+
+
+</body>
+</html>
